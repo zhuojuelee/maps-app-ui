@@ -1,4 +1,4 @@
 export type SearchHistory = string[];
-export type SearchResultsHistory = string[];
+export type SearchResults = string[];
 
-export type DrawerListData = SearchHistory | SearchResultsHistory;
+export type DrawerListData = SearchHistory | SearchResults;

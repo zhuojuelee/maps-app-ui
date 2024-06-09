@@ -2,7 +2,8 @@ import { Provider } from 'react-redux';
 import './App.css';
 import AutocompleteTextInput from '../autocomplete';
 import Map from '../map';
-import SearchHistoryDrawer from '../search-history-drawer';
+import SearchDrawer from '../search-drawer';
+import FavouritesDrawer from '../favourites-drawer';
 import { GoogleMapsApiContext } from '../../modules/google-maps-context';
 import useGoogleMapsPlacesApi from '../../hooks/useGoogleMapsApi';
 import store from './store';
@@ -18,7 +19,8 @@ function App() {
           <h3 className='titleColors'>Begin by enterring a place!</h3>
           <AutocompleteTextInput />
           <Map />
-          <SearchHistoryDrawer />
+          <SearchDrawer />
+          <FavouritesDrawer />
         </GoogleMapsApiContext.Provider>
       </Provider>
     </>

@@ -1,49 +1,36 @@
-import React, { ReactNode, useState, useMemo } from 'react';
+import React, { ReactNode, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
-import Button from '@mui/material/Button';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
-import HistoryIcon from '@mui/icons-material/History';
-import { Typography } from '@mui/material';
 import { DrawerListData } from '../../types/types-public';
 
-type DrawerIconTextProps = {
-  title: string;
-}
-
-const DrawerIconText: React.FC<DrawerIconTextProps> = (props) => {
-  const { title } = props;
-
-  return (
-    <Stack alignItems='center' justifyContent='left' direction='row' gap={1} padding={2}>
-      <HistoryIcon />
-      <Typography variant='body1'>{title}</Typography>
-    </Stack>
-  )
-}
-
 type DrawerComponentProps = {
-  title: string;
+  isVisible: boolean;
   listData: DrawerListData[];
   drawerWidth: number;
-  drawerButtonTitle: string;
   enableCustomDrawerControl: boolean;
+  variant?: 'temporary' | 'permanent' | 'persistent';
+  anchor?: 'left' | 'right' | 'top' | 'bottom';
+  onDrawerClose?: () => void;
+  renderDrawerIconText: () => ReactNode;
   renderListItem: (any) => ReactNode[];
   renderCustomDrawerControl?: () => ReactNode;
 }
 
 const DrawerComponent: React.FC<DrawerComponentProps> = (props) => {
-  const [open, setOpen] = useState(false);
   const {
-    title,
+    variant = 'temporary',
+    anchor = 'left',
+    isVisible,
     listData,
     drawerWidth,
-    drawerButtonTitle,
     enableCustomDrawerControl,
+    onDrawerClose,
     renderListItem,
-    renderCustomDrawerControl
+    renderDrawerIconText,
+    renderCustomDrawerControl,
   } = props;
 
   const calculatedDrawerWidth = useMemo(() => {
@@ -53,18 +40,14 @@ const DrawerComponent: React.FC<DrawerComponentProps> = (props) => {
     return drawerWidth;
   }, [enableCustomDrawerControl, drawerWidth])
 
-  const toggleDrawer = (newOpen: boolean) => () => {
-    setOpen(newOpen);
-  };
-
   const DrawerList = (
-    <Box sx={{ width: calculatedDrawerWidth }} role="presentation" onClick={toggleDrawer(false)}>
+    <Box sx={{ width: calculatedDrawerWidth }} role="presentation">
       <Stack
         alignItems='center'
         justifyContent='center'
         direction='row' gap={0}
       >
-        <DrawerIconText title={title} />
+        {renderDrawerIconText()}
         {enableCustomDrawerControl ? renderCustomDrawerControl() : null}
       </Stack>
       <Divider />
@@ -76,8 +59,7 @@ const DrawerComponent: React.FC<DrawerComponentProps> = (props) => {
 
   return (
     <div>
-      <Button onClick={toggleDrawer(true)}>{drawerButtonTitle}</Button>
-      <Drawer open={open} variant='persistent' onClose={toggleDrawer(false)}>
+      <Drawer open={isVisible} anchor={anchor} variant={variant} onClose={onDrawerClose}>
         {DrawerList}
       </Drawer>
     </div>

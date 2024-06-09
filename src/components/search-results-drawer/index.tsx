@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import DrawerComponent from '../drawer';
 import { connect } from 'react-redux';
-import { SearchHistory } from '../../types/types-public';
+import { SearchResults } from '../../types/types-public';
 import {
   IconButton,
   ListItem,
@@ -12,31 +12,31 @@ import {
 } from '@mui/material';
 import HistoryIcon from '@mui/icons-material/History';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { resetSearchHistory } from '../../reducers/search-history';
-
+import { resetSearchResults } from '../../reducers/search-results';
 
 type MapStateToPropsType = {
-  searchHistory: SearchHistory[];
+  searchResults: SearchResults[];
 };
 
 type MapDispatchToPropsType = {
-  resetSearchHistory: () => void;
+  resetSearchResults: () => void;
 };
 
 type ComponentProps = { isVisible: boolean, onDrawerClose: () => void }
 
-type SearchHistoryDrawerProps = MapStateToPropsType & MapDispatchToPropsType & ComponentProps
+type SearchResultsDrawerComponentProps =
+  MapStateToPropsType & MapDispatchToPropsType & ComponentProps;
 
 const mapStateToProps = (state) => ({
-  searchHistory: state.searchHistory
+  searchResults: state.searchResults
 });
 
 const mapDispatchToProps = {
-  resetSearchHistory: resetSearchHistory
+  resetSearchResults: resetSearchResults,
 };
 
-const SearchHistoryDrawer: React.FC<SearchHistoryDrawerProps> = (props) => {
-  const { searchHistory, resetSearchHistory, isVisible, onDrawerClose } = props;
+const SearchResultsDrawer: React.FC<SearchResultsDrawerComponentProps> = (props) => {
+  const { searchResults, resetSearchResults, isVisible, onDrawerClose } = props;
 
   const renderDrawerIconText = useCallback(() => {
     return (
@@ -55,7 +55,7 @@ const SearchHistoryDrawer: React.FC<SearchHistoryDrawerProps> = (props) => {
         </ListItemButton>
       </ListItem>
     )
-  }, [searchHistory]);
+  }, [searchResults]);
 
   const renderCustomControl = useCallback(() => {
     return (
@@ -64,30 +64,30 @@ const SearchHistoryDrawer: React.FC<SearchHistoryDrawerProps> = (props) => {
           alignSelf: 'center',
           border: 1
         }}
-        onClick={resetSearchHistory}
+        onClick={resetSearchResults}
       >
         <DeleteForeverIcon />
       </IconButton>
     )
-  }, [resetSearchHistory]);
+  }, [resetSearchResults]);
 
   return (
     <DrawerComponent
-      listData={searchHistory}
+      listData={searchResults}
       isVisible={isVisible}
-      onDrawerClose={onDrawerClose}
       // @ts-ignore
       renderListItem={renderListItem}
       renderCustomDrawerControl={renderCustomControl}
       renderDrawerIconText={renderDrawerIconText}
-      drawerButtonTitle='Open Search History'
+      drawerButtonTitle='Open Search Results'
       enableCustomDrawerControl={true}
       drawerWidth={300}
+      onDrawerClose={onDrawerClose}
     />
   );
 };
 
-const memoized = React.memo(SearchHistoryDrawer);
+const memoized = React.memo(SearchResultsDrawer);
 const connector =
   connect<MapStateToPropsType, MapDispatchToPropsType>(mapStateToProps, mapDispatchToProps);
 export default connector(memoized);
