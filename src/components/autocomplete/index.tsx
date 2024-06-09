@@ -1,25 +1,36 @@
 import { TextField } from "@mui/material";
-import { GoogleMapsPlacesAPiContext } from '../../modules/google-maps-context'
+import { GoogleMapsApiContext } from '../../modules/google-maps-context'
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
 import { addToSearchHistory } from "../../reducers/search-history";
 import { addToSearchResults } from "../../reducers/search-results";
+import { setSelectedPlace, resetSelectedPlace } from "../../reducers/place";
 
+type ComponentProps = any;
 
 type MapDispatchToProps = {
-  addToSearchHistory?: (payload: string) => void;
-  addToSearchResults?: (payload: string) => void;
-}
+  addToSearchHistory: (payload: string) => void;
+  addToSearchResults: (payload: string) => void;
+  setSelectedPlace: (payload: { lat: number; long: number }) => void;
+  resetSelectedPlace: () => void;
+};
 
-const mapDispatchToProps = { addToSearchHistory, addToSearchResults };
+type AutoCompleteTextInputProps = MapDispatchToProps & ComponentProps;
 
-const AutoCompleteTextInput: React.FC<MapDispatchToProps> = (props) => {
-  const placesLibrary = useContext(GoogleMapsPlacesAPiContext);
+const mapDispatchToProps = {
+  addToSearchHistory,
+  addToSearchResults,
+  setSelectedPlace,
+  resetSelectedPlace
+};
+
+const AutoCompleteTextInput: React.FC<AutoCompleteTextInputProps> = (props) => {
+  const { places } = useContext(GoogleMapsApiContext);
   const [inputPlaceHolder, setInputPlaceHolder] = useState<string>("Enter a place");
   const userInputRef = useRef<string>('');
   const autocomplete = useRef<google.maps.places.Autocomplete>();
   const textInputRef = useRef<HTMLInputElement>(null);
-  const { addToSearchHistory, addToSearchResults } = props;
+  const { addToSearchHistory, addToSearchResults, setSelectedPlace, resetSelectedPlace } = props;
 
   const onPlaceChanged = useCallback(() => {
     // Add to search history redux store
@@ -34,18 +45,25 @@ const AutoCompleteTextInput: React.FC<MapDispatchToProps> = (props) => {
       return; // Unable to search result toast?
     }
 
+    const { lat, lng } = placeResult.geometry.location.toJSON();
+    setSelectedPlace({ lat, long: lng });
     addToSearchResults(placeResult.name); // If found place add to search results
     console.log(placeResult) // Pin on map
   }, []);
 
+  // Reset selectedPlace onMount
   useEffect(() => {
-    if (placesLibrary === undefined) {
+    resetSelectedPlace();
+  }, []);
+
+  useEffect(() => {
+    if (places === undefined) {
       setInputPlaceHolder('Autocomplete service is offline')
       return;
     }
 
     setInputPlaceHolder("Enter a place")
-    autocomplete.current = new placesLibrary.Autocomplete(textInputRef.current, {
+    autocomplete.current = new places.Autocomplete(textInputRef.current, {
       fields: ['place_id', 'name', 'geometry']
     });
     autocomplete.current.addListener('place_changed', onPlaceChanged);
@@ -53,16 +71,18 @@ const AutoCompleteTextInput: React.FC<MapDispatchToProps> = (props) => {
     return () => {
       autocomplete.current = null;
     }
-  }, [placesLibrary]);
+  }, [places]);
 
   // Probably can be improved to consume a generic children
   return (
     <TextField
+      label='Search place'
       placeholder={inputPlaceHolder}
       inputRef={textInputRef}
-      id="outlined-basic"
-      variant="outlined"
+      id='outlined-basic'
+      variant='outlined'
       onChange={(e) => userInputRef.current = e.target.value}
+      style={{ width: 500 }}
     />
   )
 }

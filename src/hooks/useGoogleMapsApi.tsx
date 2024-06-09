@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { Loader } from '@googlemaps/js-api-loader';
 
 
-const useGoogleMapsPlacesApi = () => {
+const useGoogleMapsApi = () => {
   const [googleMapsPlacesApi, setGoogleMapsPlacesApi] = useState<google.maps.PlacesLibrary>();
+  const [googleMapsMapsApi, setGoogleMapsMapsApi] = useState<google.maps.MapsLibrary>();
 
   useEffect(() => {
     const loadGoogleMapsApi = async () => {
@@ -17,17 +18,23 @@ const useGoogleMapsPlacesApi = () => {
       const loader = new Loader({
         apiKey,
         version: 'weekly',
-        libraries: ['places']
+        libraries: ['places', 'maps']
       });
 
-      const googleMapsResponse = await loader.importLibrary('places');
-      setGoogleMapsPlacesApi(googleMapsResponse);
+      const googleMapsPlacesResponse = await loader.importLibrary('places');
+      const googleMapsMapsResponse = await loader.importLibrary('maps');
+
+      setGoogleMapsPlacesApi(googleMapsPlacesResponse);
+      setGoogleMapsMapsApi(googleMapsMapsResponse);
     }
 
     loadGoogleMapsApi();
   }, []);
 
-  return googleMapsPlacesApi;
+  return {
+    places: googleMapsPlacesApi,
+    maps: googleMapsMapsApi
+  }
 }
 
-export default useGoogleMapsPlacesApi;
+export default useGoogleMapsApi;

@@ -12,7 +12,7 @@ const searchHistorySlice = createSlice({
       state.push(action.payload);
 
     },
-    resetSearchHistory: (state) => state.splice(0, state.length)
+    resetSearchHistory: (state) => void (state.splice(0, state.length))
   },
 })
 

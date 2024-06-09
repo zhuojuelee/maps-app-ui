@@ -1,8 +1,9 @@
 import { createContext } from "react";
 
 export type GoogleMapsPlacesApiValue = {
-  places: google.maps.PlacesLibrary
+  places: google.maps.PlacesLibrary;
+  maps: google.maps.MapsLibrary;
 }
 
-export const GoogleMapsPlacesAPiContext =
-  createContext<google.maps.PlacesLibrary | undefined>(undefined);
+export const GoogleMapsApiContext =
+  createContext<GoogleMapsPlacesApiValue | undefined>(undefined);

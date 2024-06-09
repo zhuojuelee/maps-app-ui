@@ -10,7 +10,6 @@ const searchResultsSlice = createSlice({
   reducers: {
     addToSearchResults: (state, action) => {
       state.push(action.payload);
-      console.log(state.toString())
     },
     resetSearchResults: (state) => state.splice(0, state.length)
   },
