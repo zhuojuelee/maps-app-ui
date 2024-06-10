@@ -10,7 +10,6 @@ const searchHistorySlice = createSlice({
   reducers: {
     addToSearchHistory: (state, action) => {
       state.push(action.payload);
-
     },
     resetSearchHistory: (state) => void (state.splice(0, state.length))
   },
