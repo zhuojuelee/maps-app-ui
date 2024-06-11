@@ -1,7 +1,7 @@
 import { Button, Stack } from '@mui/material';
 import React, { useCallback, useState } from 'react';
-import SearchHistoryDrawer from '../search-history-drawer';
-import SearchResultsDrawer from '../search-results-drawer';
+import SearchHistoryDrawer from './search-history-drawer';
+import SearchResultsDrawer from './search-results-drawer';
 
 const SearchInfoDrawer = () => {
   const [isSearchHistoryDrawerOpen, setIsSearchHistoryDrawerOpen] = useState<boolean>(false);

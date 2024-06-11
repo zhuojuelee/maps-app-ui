@@ -9,6 +9,6 @@ export default configureStore({
     searchHistory: searchHistoryReducer,
     searchResults: searchResultsReducer,
     selectedPlace: placeReducer,
-    favourites: favouritesReducer
+    favourites: favouritesReducer,
   },
 });

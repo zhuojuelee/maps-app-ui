@@ -12,5 +12,15 @@ export type FavouritePlaceItem = {
 };
 
 export type FavouritesPlaceList = FavouritePlaceItem[];
-
+export type SelectedPlace = {
+  placeId: string;
+  name: string;
+  lat: number;
+  long: number;
+}
 export type PlaceTemperature = number;
+
+export type StateLatLng = {
+  lat: number;
+  long: number;
+};

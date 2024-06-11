@@ -1,4 +1,3 @@
-import fetch from 'node-fetch';
 import { FavouritePlaceItem } from '../types/types-public';
 
 const ACTION = Object.freeze({
@@ -24,11 +23,13 @@ const getPath = (action, placeId?: string) => {
 
 const fetchFavouritesList = async () => {
   const response = await fetch(getPath(ACTION.GET_ALL), {
+    mode: 'cors',
     method: 'GET',
-    headers: { 'Content-Type': 'application/json' }
   });
 
-  if (!response.ok) return false;
+  if (!response.ok) {
+    return false;
+  }
 
   const data = await response.json();
   // @ts-ignore
@@ -37,9 +38,11 @@ const fetchFavouritesList = async () => {
 };
 
 const createFavouriteItem = async (place: FavouritePlaceItem) => {
-  const response = await fetch(getPath(ACTION.CREATE_NEW, place.placeId), {
+  const response = await fetch(getPath(ACTION.CREATE_NEW, ''), {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json'
+    },
     body: JSON.stringify(place),
   });
 
@@ -52,7 +55,7 @@ const createFavouriteItem = async (place: FavouritePlaceItem) => {
 const deleteFavouriteItem = async (placeId: string) => {
   const response = await fetch(getPath(ACTION.DELETE_PLACE, placeId), {
     method: 'DELETE',
-    headers: { 'Content-Type': 'application/json' }
+    mode: "cors",
   });
 
   if (response.ok) {
@@ -64,7 +67,7 @@ const deleteFavouriteItem = async (placeId: string) => {
 const getPlaceWeather = async (placeId: string) => {
   const response = await fetch(getPath(ACTION.GET_WEATHER, placeId), {
     method: 'GET',
-    headers: { 'Content-Type': 'application/json' }
+    mode: "cors"
   });
 
   if (!response.ok) return undefined;
@@ -73,11 +76,9 @@ const getPlaceWeather = async (placeId: string) => {
 }
 
 
-const FavouritesClient = {
+export const FavouritesClient = {
   fetchFavouritesList,
   createFavouriteItem,
   deleteFavouriteItem,
   getPlaceWeather
 };
-
-export default FavouritesClient;

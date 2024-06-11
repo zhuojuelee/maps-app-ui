@@ -2,14 +2,10 @@ import React, { useContext, useEffect, useRef, useState } from "react"
 import { connect } from "react-redux";
 import { GoogleMapsApiContext } from "../../modules/google-maps-context"
 import { Box } from "@mui/material";
+import { StateLatLng } from '../../types/types-public';
 
 const defaultLat: number = 3.138506;
 const defaultLng: number = 101.68699;
-
-type StateLatLng = {
-  lat: number;
-  long: number;
-};
 
 type MapStateToPropsType = {
   selectedPlace: StateLatLng;
@@ -52,7 +48,7 @@ const MapComponent: React.FC<MapComponentProps> = (props) => {
   }, [isMapOffline]);
 
   useEffect(() => {
-    if (mapRef.current === undefined) return;
+    if (isMapOffline) return;
 
     const { lat, long } = selectedPlace;
     const panToLatLng = { lat, lng: long };
@@ -60,7 +56,7 @@ const MapComponent: React.FC<MapComponentProps> = (props) => {
 
     // Pan to area on map
     mapRef.current.panTo(panToLatLng);
-  }, [selectedPlace])
+  }, [selectedPlace, isMapOffline])
 
   return (
     <div>

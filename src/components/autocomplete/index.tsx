@@ -26,6 +26,7 @@ const mapDispatchToProps = {
 
 const AutoCompleteTextInput: React.FC<AutoCompleteTextInputProps> = (props) => {
   const { places } = useContext(GoogleMapsApiContext);
+  const [isMapsApiAvail, setIsMapsApiAvail] = useState<boolean>(false);
   const [inputPlaceHolder, setInputPlaceHolder] = useState<string>("Enter a place");
   const userInputRef = useRef<string>('');
   const autocomplete = useRef<google.maps.places.Autocomplete>();
@@ -45,8 +46,9 @@ const AutoCompleteTextInput: React.FC<AutoCompleteTextInputProps> = (props) => {
       return; // Unable to search result toast?
     }
 
+    const { place_id, name } = placeResult;
     const { lat, lng } = placeResult.geometry.location.toJSON();
-    setSelectedPlace({ lat, long: lng });
+    setSelectedPlace({ lat, long: lng, placeId: place_id, name: name });
     addToSearchResults(placeResult.name); // If found place add to search results
     console.log(placeResult) // Pin on map
   }, []);
@@ -58,6 +60,7 @@ const AutoCompleteTextInput: React.FC<AutoCompleteTextInputProps> = (props) => {
 
   useEffect(() => {
     if (places === undefined) {
+      setIsMapsApiAvail(false);
       setInputPlaceHolder('Autocomplete service is offline')
       return;
     }
@@ -67,6 +70,7 @@ const AutoCompleteTextInput: React.FC<AutoCompleteTextInputProps> = (props) => {
       fields: ['place_id', 'name', 'geometry']
     });
     autocomplete.current.addListener('place_changed', onPlaceChanged);
+    setIsMapsApiAvail(true);
 
     return () => {
       autocomplete.current = null;
@@ -76,7 +80,8 @@ const AutoCompleteTextInput: React.FC<AutoCompleteTextInputProps> = (props) => {
   // Probably can be improved to consume a generic children
   return (
     <TextField
-      label='Search place'
+      disabled={!isMapsApiAvail}
+      label={isMapsApiAvail ? 'Search Place' : 'Maps is offline'}
       placeholder={inputPlaceHolder}
       inputRef={textInputRef}
       id='outlined-basic'

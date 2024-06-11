@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import FavouritesClient from '../lib/favourites-client'
+import { FavouritesClient } from '../lib/favourites-client'
 
 const initialState = {
   data: [],
@@ -26,20 +26,27 @@ const FavouriteSlice = createSlice({
       data: [],
       error: true,
     }),
+    addFavouritePlace: (state, action) => {
+      data: state.data.push(action.payload);
+    }
   }
 });
 
-export const { startLoading, dataFetched, dataFetchedWithError } = FavouriteSlice.actions;
+export const { startLoading, dataFetched, dataFetchedWithError, addFavouritePlace }
+  = FavouriteSlice.actions;
 export const getFavouritesDataSlice = (state) => state.favourites;
 
-export const fetchFavourites = createAsyncThunk(
+export const fetchFavouritesThunk = createAsyncThunk(
   'favourites/fetchFavouritesList',
   async (_, thunkApi) => {
     thunkApi.dispatch(startLoading())
+    console.log('thunk')
+
     const response = await FavouritesClient.fetchFavouritesList();
 
     if (response === false) {
       thunkApi.dispatch(dataFetchedWithError());
+      return;
     }
 
     thunkApi.dispatch(dataFetched(response));

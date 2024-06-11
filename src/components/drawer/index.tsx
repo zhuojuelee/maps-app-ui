@@ -4,11 +4,10 @@ import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
-import { DrawerListData } from '../../types/types-public';
 
 type DrawerComponentProps = {
   isVisible: boolean;
-  listData: DrawerListData[];
+  listData: any[];
   drawerWidth: number;
   enableCustomDrawerControl: boolean;
   variant?: 'temporary' | 'permanent' | 'persistent';
@@ -17,6 +16,7 @@ type DrawerComponentProps = {
   renderDrawerIconText: () => ReactNode;
   renderListItem: (any) => ReactNode[];
   renderCustomDrawerControl?: () => ReactNode;
+  renderOnEmptyList?: () => ReactNode;
 }
 
 const DrawerComponent: React.FC<DrawerComponentProps> = (props) => {
@@ -30,6 +30,7 @@ const DrawerComponent: React.FC<DrawerComponentProps> = (props) => {
     onDrawerClose,
     renderListItem,
     renderDrawerIconText,
+    renderOnEmptyList,
     renderCustomDrawerControl,
   } = props;
 
@@ -51,9 +52,10 @@ const DrawerComponent: React.FC<DrawerComponentProps> = (props) => {
         {enableCustomDrawerControl ? renderCustomDrawerControl() : null}
       </Stack>
       <Divider />
-      <List>
+      {listData.length > 0 ? (<List>
         {listData.map((data) => renderListItem(data))}
-      </List>
+      </List>) : null}
+      {listData.length === 0 && renderOnEmptyList !== undefined ? renderOnEmptyList() : null}
     </Box >
   );
 
